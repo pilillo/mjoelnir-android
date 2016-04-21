@@ -23,9 +23,6 @@ import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
 
-/**
- * Created by a.monacchi on 13.03.2016.
- */
 public class Model {
 
     private static Model instance;
@@ -73,8 +70,6 @@ public class Model {
                 url = new URL(path);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("GET");
-
-                //System.out.println("** Request at "+path);
 
                 if(conn.getResponseCode() == 201 || conn.getResponseCode() == 200){
                     sb = new StringBuilder();

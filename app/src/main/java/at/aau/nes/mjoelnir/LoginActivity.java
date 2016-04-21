@@ -61,6 +61,8 @@ public class LoginActivity extends AppCompatActivity
         // if already attempting to login, discard the additional request
         if (ongoingLogin) {
             return;
+        }else{
+            ongoingLogin = true;
         }
 
         // attempt login
@@ -172,6 +174,8 @@ public class LoginActivity extends AppCompatActivity
                 Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         }
+
+        ongoingLogin = false;
     }
 
     @Override
@@ -180,6 +184,7 @@ public class LoginActivity extends AppCompatActivity
 
         //mPasswordView.setError(getString(R.string.error_incorrect_password));
         //mPasswordView.requestFocus();
+        ongoingLogin = false;
     }
 
     /*
