@@ -1,0 +1,27 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    tools:context="at.aau.nes.mjoelnir.disaggregatedData.DeviceListFragment">
+
+    <ListView
+        android:id="@id/android:list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:layout_gravity="top"
+
+        android:divider="@android:color/transparent"
+        android:dividerHeight="6px"
+        />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/devicelist_addcredit_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:src="@drawable/ic_plus_sign" />
+
+</FrameLayout>

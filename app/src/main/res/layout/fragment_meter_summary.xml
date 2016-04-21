@@ -1,0 +1,35 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="at.aau.nes.mjoelnir.aggregatedData.MeterSummary">
+
+    <!--
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@id/android:list"
+        android:clickable="true"
+        android:layout_gravity="top" />
+    -->
+
+    <com.github.mikephil.charting.charts.BarChart
+        android:id="@+id/energy_bar_chart"
+
+        android:layout_margin="20dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginTop="20dp"
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/meter_newreading_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:src="@drawable/ic_plus_sign" />
+
+</FrameLayout>

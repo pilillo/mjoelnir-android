@@ -1,0 +1,39 @@
+<resources>
+    <string name="app_name">Mjölnir</string>
+    <string name="webpage_server_url">http://mjoelnir.altervista.org/index.php</string>
+    <string name="server_url">http://mjoelnir.altervista.org/rest.php</string>
+    <string name="websocket_connection">ws://mjoelnir.nes.aau.at:8888</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in</string>
+    <string name="action_credit_add">Add credit</string>
+    <string name="text_credittoadd">Credit:</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">Contacts permissions are needed for providing email completions.</string>
+
+    <string name="error_network_unavailable">No network available! Please retry later.</string>
+    <string name="error_unavailable_consumption_data">No data available for the selected period!</string>
+    <string name="successfull_reading_upload">Reading successfully uploaded!</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="dataset_consumption">Consumption (kWh)</string>
+    <string name="dataset_production">Production (kWh)</string>
+
+    <string name="anyline_license_key" translatable="false">eyJzY29wZSI6WyJCQVJDT0RFIiwiTVJaIiwiRU5FUkdZIiwiQU5ZTElORV9PQ1IiLCJET0NVTUVOVCIsIkFMTCJdLCJwbGF0Zm9ybSI6WyJpT1MiLCJBbmRyb2lkIiwiV2luZG93cyJdLCJ2YWxpZCI6IjIwMTctMDMtMTciLCJtYWpvclZlcnNpb24iOiIzIiwiaXNDb21tZXJjaWFsIjpmYWxzZSwidG9sZXJhbmNlRGF5cyI6NjAsImlvc0lkZW50aWZpZXIiOlsiYXQuYWF1Lm5lcy5tam9lbG5pciJdLCJhbmRyb2lkSWRlbnRpZmllciI6WyJhdC5hYXUubmVzLm1qb2VsbmlyIl0sIndpbmRvd3NJZGVudGlmaWVyIjpbImF0LmFhdS5uZXMubWpvZWxuaXIiXX0KSWF0U0RWRlFwektyWUJMUWRNWXZOMnVRaTMzSHYxUVdyeUJvNDA0WkZ5RlZ4RlQzd0FoY3ZHZWF5M3JBNFB6b1FYNjVNcFVzSDk2ZnhMdUlVenZxdnhSMGxxbTZjK3R6M3A0dm4rYjRzeVRKY0daK2U4WVI3bWtWNmFiblM0MlNFQUpPbTJIaFhTV3A1ZWp4anBWSWRwSnJIQWxJWnpQMGhPQzdZd0haMlh1ejVnaXdhTWVHY3EramVhWWZvaUlPTy94Qm93RUUwRlN2RHBpRzBWb2pzTjlnRkR1NlUzcm5yRXdpMzNLYnR4bVRZdlNNTHhzZnlWL1J2c25uSEs2c2x5WWtjRlVONDBsS3ltcGtKd0RhVjBRYnNXVFJUS2p0bll5YlJpU215d3FrcWlaS1ZvQS9IcHN3MlQ1eVd0b2xubHFyUjFZWnlWemFzOTZLVVE1YUlnPT0=</string>
+
+    <string name="addreading_title">Scan meter reading:</string>
+    <string name="addreading_metertype">Meter type:</string>
+    <string name="addreading_consumption">Consumption</string>
+    <string name="addreading_production">Production</string>
+
+    <!--<string name="gcm_defaultSenderId">995490029917</string>-->
+
+</resources>
