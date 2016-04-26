@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
@@ -22,6 +23,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import at.aau.nes.mjoelnir.MainActivity;
@@ -55,13 +57,17 @@ public class DeviceListFragment extends ListFragment
 
     private final String DEVICES = "devices";
 
+    private HashMap<String, Model.PerformRESTCallTask> tasks;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        tasks = new HashMap<>();
+
         ArrayList<Device> devices = null;
-        if(savedInstanceState.containsKey(DEVICES)){
-            savedInstanceState.getParcelableArrayList(DEVICES);
+        if(savedInstanceState != null && savedInstanceState.containsKey(DEVICES)){
+            devices = savedInstanceState.getParcelableArrayList(DEVICES);
         }else{
             devices = new ArrayList<Device>();
         }
@@ -72,10 +78,19 @@ public class DeviceListFragment extends ListFragment
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        for(Model.PerformRESTCallTask t : tasks.values()){
+            t.cancel(true);
+        }
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-
+        outState.putParcelableArrayList(DEVICES, (ArrayList<Device>) adapter.getItems());
     }
 
     @Override
@@ -103,7 +118,6 @@ public class DeviceListFragment extends ListFragment
         super.onActivityCreated(savedInstanceState);
 
         //getListView().setEmptyView(emptyMessage);
-
         getDevices();
     }
 
@@ -115,11 +129,12 @@ public class DeviceListFragment extends ListFragment
         getListView().setVisibility(View.GONE);
 
         // request device list from the server
-        Model.asynchRequest(this,
+        Model.PerformRESTCallTask gd = Model.asynchRequest(this,
                 getString(R.string.rest_url) + "?"
                         + "authentification_key=" + MainActivity.authentificationKey + "&operation=" + "getdevices",
                 //Model.GET,
                 "getDevices");
+        tasks.put("getDevices", gd);
     }
 
     private void addCredit(){
@@ -142,15 +157,15 @@ public class DeviceListFragment extends ListFragment
             int devicePos = data.getIntExtra(AddCreditDialog.CREDITADD_DEVICENAME, 0);
 
 
-            Model.asynchRequest(this,
-                         getString(R.string.rest_url)+"?"+
-                                "authentification_key="+ MainActivity.authentificationKey +
-                                "&operation=credit"+
-                                 "&device="+ ((DeviceListAdapter) getListAdapter() ).getDevice(devicePos).id +
-                                "&value="+value
-                        //, Model.GET
-                        ,"addCredit");
-
+            Model.PerformRESTCallTask ac = Model.asynchRequest(this,
+                    getString(R.string.rest_url) + "?" +
+                            "authentification_key=" + MainActivity.authentificationKey +
+                            "&operation=credit" +
+                            "&device=" + ((DeviceListAdapter) getListAdapter()).getDevice(devicePos).id +
+                            "&value=" + value
+                    //, Model.GET
+                    , "addCredit");
+            tasks.put("addCredit", ac);
             //System.out.println("*** Charge "+value+" on device "+((DeviceListAdapter) getListAdapter() ).getDevice(devicePos).name);
         }
 
@@ -165,6 +180,7 @@ public class DeviceListFragment extends ListFragment
         @Override
         public void callback(String eventName, JSONObject payload) {
             if(eventName.equals("getDevices")){
+                tasks.remove("getDevices");
                 //System.out.println("Devices correctly received: "+payload.toString());
                 try {
                     adapter.clear();
@@ -189,6 +205,7 @@ public class DeviceListFragment extends ListFragment
                 if(adapter.getCount() == 0) emptyMessage.setVisibility(View.VISIBLE);
 
             }else if(eventName.equals("addCredit")){
+                tasks.remove("addCredit");
                 getDevices();
             }
         }

@@ -36,10 +36,11 @@ public class Model {
         return instance;
     }
 
-    public static void asynchRequest(CallableView outcome, String path, String eventName){
+    public static PerformRESTCallTask asynchRequest(CallableView outcome, String path, String eventName){
         PerformRESTCallTask t = new PerformRESTCallTask(eventName, path);
         t.updateUIOnCallback(outcome);
         t.execute((Void) null);
+        return t;
     }
 
 

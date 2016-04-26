@@ -29,6 +29,7 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 
 import at.aau.nes.mjoelnir.MainActivity;
 import at.aau.nes.mjoelnir.R;
@@ -61,12 +62,21 @@ public class MeterSummary extends Fragment implements CallableView{
 
     private ArrayList<IBarDataSet> dataSets;
 
+    private HashMap<String, Model.PerformRESTCallTask> tasks;
+
     public MeterSummary() {
         // Required empty public constructor
     }
 
     public static MeterSummary newInstance(){
         return new MeterSummary();
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        tasks = new HashMap<>();
     }
 
     @Override
@@ -106,7 +116,6 @@ public class MeterSummary extends Fragment implements CallableView{
         chart.setVisibleXRangeMaximum(12);
         chart.setVisibleYRangeMaximum(30, YAxis.AxisDependency.LEFT);
 
-
         chart.setData(null);
         chart.invalidate();
 
@@ -121,19 +130,29 @@ public class MeterSummary extends Fragment implements CallableView{
         progress.setVisibility(View.VISIBLE);
 
         // Retrieve last meter readings
-        Model.asynchRequest(this,
+        Model.PerformRESTCallTask gmr = Model.asynchRequest(this,
                 getString(R.string.rest_url) + "?" +
                         "authentification_key=" + MainActivity.authentificationKey +
                         "&operation=getaggmeter"
                 , "getMeterReadings");
+        tasks.put("getMeterReadings", gmr);
 
         // Retrieve history of consumption and production over the last days
-        Model.asynchRequest(this,
+        Model.PerformRESTCallTask ged = Model.asynchRequest(this,
                 getString(R.string.rest_url) + "?" +
                         "authentification_key=" + MainActivity.authentificationKey +
                         "&operation=getaggdata"
                 , "getEnergyData");
+        tasks.put("getEnergyData", ged);
+    }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        for(Model.PerformRESTCallTask t : tasks.values()){
+            t.cancel(true);
+        }
     }
 
     private void addReading(){
@@ -150,16 +169,16 @@ public class MeterSummary extends Fragment implements CallableView{
             String type = data.getStringExtra(AddReadingDialog.OCRMETERREADER_TYPE).equals("Production")
                     ? "p" : "c";
 
-            Model.asynchRequest(this,
+            Model.PerformRESTCallTask sr = Model.asynchRequest(this,
                     // operation, authkey, production, consumption and timestamp
-                    getString(R.string.rest_url)+"?"+
-                            "authentification_key="+ MainActivity.authentificationKey +
-                            "&operation=addaggmeter"+
-                            "&input="+type+
-                            "&value="+value+
-                            "&timestamp="+ (Calendar.getInstance().getTimeInMillis()/1000L)
-
-                    ,"saveReading");
+                    getString(R.string.rest_url) + "?" +
+                            "authentification_key=" + MainActivity.authentificationKey +
+                            "&operation=addaggmeter" +
+                            "&input=" + type +
+                            "&value=" + value +
+                            "&timestamp=" + (Calendar.getInstance().getTimeInMillis() / 1000L)
+                    , "saveReading");
+            tasks.put("saveReading", sr);
         }
     }
 
@@ -168,19 +187,20 @@ public class MeterSummary extends Fragment implements CallableView{
         //System.out.println(payload);
 
         if (eventName.equals("saveReading")) {
-            // show toast
+            tasks.remove("saveReading");
             Toast.makeText(getContext(), getString(R.string.successfull_reading_upload), Toast.LENGTH_SHORT).show();
 
             // update meter summary list
-            Model.asynchRequest(this,
-
+            Model.PerformRESTCallTask ged = Model.asynchRequest(this,
                     getString(R.string.rest_url) + "?" +
                             "authentification_key=" + MainActivity.authentificationKey +
                             "&operation=getaggdata"
 
                     , "getEnergyData");
+            tasks.put("getEnergyData", ged);
 
         }else if(eventName.equals("getMeterReadings")){
+            tasks.remove("getMeterReadings");
             // {"readingC":"10647","timestampC":"1460217711","readingP":"123457","timestampP":"1458601200"}
             try {
 
@@ -203,6 +223,7 @@ public class MeterSummary extends Fragment implements CallableView{
             }
 
         }else if(eventName.equals("getEnergyData")){
+            tasks.remove("getEnergyData");
             try {
                 JSONArray readings = payload.getJSONArray("payload");
                 // [["7","42","1458601200"],["0","0","1458514800"],["0","0","1458428400"],["0","0","1458342000"],["17","22","1458255600"]]
