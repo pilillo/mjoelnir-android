@@ -46,6 +46,7 @@ public class MainFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_main, container, false);
         viewPager = (ViewPager) v.findViewById(R.id.pager);
         viewPager.setAdapter(adapter);
+        viewPager.setOffscreenPageLimit(adapter.getCount());
         //viewPager.setPageTransformer(true, new RotateUpTransformer());
 
         tabLayout = (TabLayout) v.findViewById(R.id.tab_layout);

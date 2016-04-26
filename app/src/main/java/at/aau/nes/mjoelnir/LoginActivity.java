@@ -23,13 +23,16 @@ import at.aau.nes.mjoelnir.model.User;
 import at.aau.nes.mjoelnir.utilities.CallableView;
 import at.aau.nes.mjoelnir.utilities.Model;
 import at.aau.nes.mjoelnir.utilities.PreferenceManager;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class LoginActivity extends AppCompatActivity
         implements
-            View.OnClickListener,
-            CallableView
-        //, Callback<User>
+            View.OnClickListener
+            , CallableView
+        , Callback<User>
 {
 
     private AutoCompleteTextView mEmailView;
@@ -61,8 +64,6 @@ public class LoginActivity extends AppCompatActivity
         // if already attempting to login, discard the additional request
         if (ongoingLogin) {
             return;
-        }else{
-            ongoingLogin = true;
         }
 
         // attempt login
@@ -105,19 +106,27 @@ public class LoginActivity extends AppCompatActivity
             // form field with an error.
             focusView.requestFocus();
         } else {
+
+            ongoingLogin = true;
+
             // login
             //Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             //startActivity(intent);
             //System.out.println("**** Making login request to server ****");
+            System.out.println("Connecting to: "+getString(R.string.rest_url) +
+                    "?operation=login&username="+mEmailView.getText().toString()+
+                    "&password="+mPasswordView.getText().toString());
 
             Model.getInstance().asynchRequest(this,
-                    getString(R.string.server_url) +
+                    getString(R.string.rest_url) +
                             "?operation=login&username="+mEmailView.getText().toString()+
                             "&password="+mPasswordView.getText().toString(),
                     "LOGIN");
 
-            //Api.getInstance().startInterface( getString(R.string.server_url)+"/" );
-            //Api.getInstance().login("Administrator", "administrator").enqueue(this);
+            /*
+            Api.getInstance().startInterface( getString(R.string.server_url) );
+            Api.getInstance().login("Administrator", "administrator").enqueue(this);
+            */
         }
     }
 
@@ -142,38 +151,58 @@ public class LoginActivity extends AppCompatActivity
         return false;
     }
 
+
     @Override
     public void callback(String eventName, JSONObject payload) {
-        if(eventName.equals("LOGIN")){
-            // check if the user is correctly logged
-            //System.out.println("*** PAYLOAD ***");
-            //System.out.println(payload.toString());
+        int error = 0;
 
+        if(payload.has("error")){
             try {
-                // get the authentication key from the payload
-                String authkey = payload.getString("authkey");
-
-                // if yes add the credentials to the shared preferences
-                PreferenceManager.addOrEditPreference("username", mEmailView.getText().toString());
-                PreferenceManager.addOrEditPreference("password", mPasswordView.getText().toString());
-                //PreferenceManager.addOrEditPreference("authkey", authkey);
-
-                // start the main activity
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                intent.putExtra("authkey", authkey);
-
-                //intent.putExtra("username", mEmailView.getText().toString());
-                //intent.putExtra("password", mPasswordView.getText().toString());
-                startActivity(intent);
-
-                // let the task die
-                //finish();
-
+                error=payload.getInt("error");
             } catch (JSONException e) {
                 e.printStackTrace();
-                Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         }
+
+        if(error > 0 && error != 100){
+            if(error == 800) Toast.makeText(getApplicationContext(), R.string.error_invalid_logindata, Toast.LENGTH_SHORT).show();
+        }else{
+
+            if(eventName.equals("LOGIN")){
+                // check if the user is correctly logged
+                //System.out.println("*** PAYLOAD ***");
+                //System.out.println(payload.toString());
+
+                try {
+                    // get the authentication key from the payload
+                    String authkey = payload.getString("authkey");
+
+                    // if yes add the credentials to the shared preferences
+                    PreferenceManager.addOrEditPreference("username", mEmailView.getText().toString());
+                    PreferenceManager.addOrEditPreference("password", mPasswordView.getText().toString());
+                    //PreferenceManager.addOrEditPreference("authkey", authkey);
+
+                    // start the main activity
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    intent.putExtra("authkey", authkey);
+
+                    //intent.putExtra("username", mEmailView.getText().toString());
+                    //intent.putExtra("password", mPasswordView.getText().toString());
+                    startActivity(intent);
+
+                    // let the task die
+                    //finish();
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+
+        }
+
+
 
         ongoingLogin = false;
     }
@@ -187,15 +216,28 @@ public class LoginActivity extends AppCompatActivity
         ongoingLogin = false;
     }
 
-    /*
+
+
     @Override
     public void onResponse(Call<User> call, Response<User> response) {
-        System.out.println(response.body().authkey);
+        //System.out.println(response.body().authkey);
+
+        // if yes add the credentials to the shared preferences
+        PreferenceManager.getInstance(this).addOrEditPreference("username", mEmailView.getText().toString());
+        PreferenceManager.getInstance(this).addOrEditPreference("password", mPasswordView.getText().toString());
+
+        // start the main activity
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        intent.putExtra("authkey", response.body().authkey);
+
+        startActivity(intent);
+        ongoingLogin = false;
     }
 
     @Override
     public void onFailure(Call<User> call, Throwable t) {
         Toast.makeText(getApplicationContext(), "Failed!", Toast.LENGTH_SHORT).show();
+        ongoingLogin = false;
     }
-    */
+
 }

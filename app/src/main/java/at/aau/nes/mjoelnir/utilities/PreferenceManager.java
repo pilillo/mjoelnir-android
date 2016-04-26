@@ -14,6 +14,10 @@ public class PreferenceManager {
         settings = context.getPreferences(context.MODE_PRIVATE);
     }
 
+    protected PreferenceManager(SharedPreferences preferences){
+        settings = preferences;
+    }
+
     public static PreferenceManager getInstance(Activity context){
         if(instance == null){
             instance = new PreferenceManager(context);
@@ -21,10 +25,20 @@ public class PreferenceManager {
         return instance;
     }
 
+    public static PreferenceManager getInstance(SharedPreferences preferences){
+        if(instance == null){
+            instance = new PreferenceManager(preferences);
+        }
+        return instance;
+    }
+
     public static void addOrEditPreference(String key, String value){
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putString(key, value);
-        editor.commit();
+        if(instance != null){
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString(key, value);
+            editor.commit();
+        }
+
     }
 
     public static boolean containsKeys(String[] keys){

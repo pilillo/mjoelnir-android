@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,13 +30,18 @@ import at.aau.nes.mjoelnir.model.Device;
 import at.aau.nes.mjoelnir.utilities.CallableView;
 import at.aau.nes.mjoelnir.utilities.DeviceControllerStub;
 import at.aau.nes.mjoelnir.utilities.Model;
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class DeviceListFragment extends ListFragment
-    implements CallableView
-    {
+    implements CallableView {
+
+    @Bind(R.id.devicelist_addcredit_button) FloatingActionButton fab;
+    @Bind(R.id.disaggregate_progress)       ProgressBar progress;
+    @Bind(R.id.disaggregate_emtpy_message)  TextView emptyMessage;
 
     private DeviceListAdapter adapter;
 
@@ -47,42 +53,70 @@ public class DeviceListFragment extends ListFragment
         return new DeviceListFragment();
     }
 
-        @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
+    private final String DEVICES = "devices";
 
-            adapter =new DeviceListAdapter(getActivity(), new ArrayList<Device>());
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-            setListAdapter(adapter);
+        ArrayList<Device> devices = null;
+        if(savedInstanceState.containsKey(DEVICES)){
+            savedInstanceState.getParcelableArrayList(DEVICES);
+        }else{
+            devices = new ArrayList<Device>();
         }
 
-        @Override
+        adapter = new DeviceListAdapter(getActivity(), devices);
+        setListAdapter(adapter);
+
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-            super.onCreateView(inflater, container, savedInstanceState);
+        super.onCreateView(inflater, container, savedInstanceState);
 
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_device_list, container, false);
+        ButterKnife.bind(this, v);
 
-        FloatingActionButton fab = (FloatingActionButton) v.findViewById(R.id.devicelist_addcredit_button);
         fab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    //System.out.println("*** Adding credit! ***");
-                    addCredit();
-                }
+            @Override
+            public void onClick(View view) {
+                //System.out.println("*** Adding credit! ***");
+                addCredit();
+            }
         });
-
-
-        getDevices();
 
         return v;
     }
 
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        //getListView().setEmptyView(emptyMessage);
+
+        getDevices();
+    }
+
     private void getDevices(){
+        // start the progress bar and hide everything else
+        progress.setVisibility(View.VISIBLE);
+
+        emptyMessage.setVisibility(View.GONE);
+        getListView().setVisibility(View.GONE);
+
         // request device list from the server
         Model.asynchRequest(this,
-                getString(R.string.server_url) + "?"
+                getString(R.string.rest_url) + "?"
                         + "authentification_key=" + MainActivity.authentificationKey + "&operation=" + "getdevices",
                 //Model.GET,
                 "getDevices");
@@ -109,7 +143,7 @@ public class DeviceListFragment extends ListFragment
 
 
             Model.asynchRequest(this,
-                         getString(R.string.server_url)+"?"+
+                         getString(R.string.rest_url)+"?"+
                                 "authentification_key="+ MainActivity.authentificationKey +
                                 "&operation=credit"+
                                  "&device="+ ((DeviceListAdapter) getListAdapter() ).getDevice(devicePos).id +
@@ -149,6 +183,11 @@ public class DeviceListFragment extends ListFragment
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+
+                progress.setVisibility(View.GONE);
+                getListView().setVisibility(View.VISIBLE);
+                if(adapter.getCount() == 0) emptyMessage.setVisibility(View.VISIBLE);
+
             }else if(eventName.equals("addCredit")){
                 getDevices();
             }

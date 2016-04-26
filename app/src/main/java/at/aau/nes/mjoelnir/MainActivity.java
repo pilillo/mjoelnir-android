@@ -61,6 +61,10 @@ public class MainActivity extends AppCompatActivity {
         }else{
             startService(new Intent(this, RegistrationIntentService.class));    // if it does not exist get a new one from Google
         }
+
+        // establish a websocket connection with the server
+        WebsocketConnectionTask t = new WebsocketConnectionTask();
+        t.execute((Void) null);
     }
 
     private class WebsocketConnectionTask extends AsyncTask<Void, Void, Boolean> {
@@ -77,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
                 System.err.println( "**** Websocket created ****" );
                 result = true;
             } catch (WebSocketException e) {
-
+                errorMessage = e.getMessage();
             }
 
             return result;
@@ -88,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
             super.onPostExecute(aBoolean);
 
             if(!result){
-                Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_SHORT);
+                Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_SHORT).show();
             }
         }
     }

@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">Mjölnir</string>
     <string name="webpage_server_url">http://mjoelnir.altervista.org/index.php</string>
-    <string name="server_url">http://mjoelnir.altervista.org/rest.php</string>
+    <string name="server_url">http://mjoelnir.altervista.org/</string>
+    <string name="rest_url">http://mjoelnir.altervista.org/rest.php</string>
     <string name="websocket_connection">ws://mjoelnir.nes.aau.at:8888</string>
 
     <!-- Strings related to login -->
@@ -13,16 +14,21 @@
     <string name="action_sign_in_short">Sign in</string>
     <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_invalid_password">This password is too short</string>
+    <string name="error_invalid_logindata">Wrong username or password, impossible to login</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
     <string name="permission_rationale">Contacts permissions are needed for providing email completions.</string>
 
     <string name="error_network_unavailable">No network available! Please retry later.</string>
     <string name="error_unavailable_consumption_data">No data available for the selected period!</string>
+    <string name="error_unavailable_device_data">No devices available!</string>
     <string name="successfull_reading_upload">Reading successfully uploaded!</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- Strings related to aggregated data -->
+    <string name="last_reading_meter">Last added reading</string>
 
     <string name="dataset_consumption">Consumption (kWh)</string>
     <string name="dataset_production">Production (kWh)</string>
@@ -35,5 +41,10 @@
     <string name="addreading_production">Production</string>
 
     <!--<string name="gcm_defaultSenderId">995490029917</string>-->
+
+    <string name="today">Today</string>
+    <string name="yesterday">Yesterday</string>
+    <string name="days">Days</string>
+    <string name="day">Day</string>
 
 </resources>

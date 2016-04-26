@@ -6,6 +6,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 /**
  * Created by a.monacchi on 21.04.2016.
@@ -35,8 +36,8 @@ public class Api {
 
     public interface ApiInterface {
 
-        @GET("?operation=login&username={username}&password={password}")
-        Call<User> loginUser(@Path("username") String username, @Path("password") String password);
+        @GET("rest.php?operation=login")
+        Call<User> loginUser(@Query("username") String username, @Query("password") String password);
     }
 
     public Call<User> login(String username, String password){

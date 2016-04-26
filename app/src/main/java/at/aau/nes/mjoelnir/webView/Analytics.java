@@ -16,6 +16,7 @@ import at.aau.nes.mjoelnir.R;
  */
 public class Analytics extends Fragment {
 
+    private WebView mWebView;
 
     public Analytics() {
         // Required empty public constructor
@@ -31,13 +32,17 @@ public class Analytics extends Fragment {
         // Inflate the layout for this fragment
         //return inflater.inflate(R.layout.fragment_analytics, container, false);
 
-        WebView mWebView = new WebView(getContext());
-
+        mWebView = new WebView(getContext());
         mWebView.getSettings().setJavaScriptEnabled(true);
-
-        mWebView.loadUrl(getString(R.string.webpage_server_url)+"?authkey=" + MainActivity.authentificationKey );
+        //mWebView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
 
         return mWebView;
     }
 
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        mWebView.loadUrl(getString(R.string.webpage_server_url) + "?authkey=" + MainActivity.authentificationKey);
+    }
 }
